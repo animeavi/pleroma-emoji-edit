@@ -109,8 +109,8 @@ function usage
 
 function update_count
 {
-    emoji_count=$(jj -i $json_path files -n | wc -l | awk '{print $1-2}')
-    jj -i $json_path -v "$emoji_count" "files_count" -p  -o $json_path
+    emoji_count=$(sudo -Hu "$pleroma_username" jj -i $json_path files -n | wc -l | awk '{print $1-2}')
+    sudo -Hu "$pleroma_username" jj -i $json_path -v "$emoji_count" "files_count" -p  -o $json_path
 }
 
 function run
@@ -135,7 +135,7 @@ function run
             sudo chown "$pleroma_username:$pleroma_username" "$json_dir/$emoji_filename"
         fi
 
-        jj -i $json_path -v "$emoji_filename" "files.$emoji_name" -p -o $json_path
+        sudo -Hu "$pleroma_username" jj -i $json_path -v "$emoji_filename" "files.$emoji_name" -p -o $json_path
         update_count
 
         echo "Emoji added!"
@@ -143,21 +143,21 @@ function run
         echo "Emoji source: $emoji_path"
         echo "Emoji path: $json_dir/$emoji_filename"
     else
-        removed_emoji_file=$(jj -i "$json_path" -O "files.$emoji_name")
+        removed_emoji_file=$(sudo -Hu "$pleroma_username" jj -i "$json_path" -O "files.$emoji_name")
 
         if [[ -z "${removed_emoji_file}" ]]; then
             echo "Emoji '$emoji_name' not found, not removing!"
             exit 1
         fi
 
-        jj -i $json_path -D "files.$emoji_name" -p -o $json_path
+        sudo -Hu "$pleroma_username" jj -i $json_path -D "files.$emoji_name" -p -o $json_path
         update_count
         echo "Emoji removed!"
         echo "Emoji name: $emoji_name"
         echo "Emoji path: $json_dir/$removed_emoji_file"
 
         if [[ ! -z "${delete_file}" ]]; then
-            rm -rf "$json_dir/$removed_emoji_file"
+            sudo -Hu "$pleroma_username" rm -rf "$json_dir/$removed_emoji_file"
             echo "Emoji file deleted from file system!"
         fi
     fi
