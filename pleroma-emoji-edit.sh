@@ -110,7 +110,7 @@ function usage
 function update_count
 {
     emoji_count=$(sudo -Hu "$pleroma_username" jj -i $json_path files -n | wc -l | awk '{print $1-2}')
-    sudo -Hu "$pleroma_username" jj -i $json_path -v "$emoji_count" "files_count" -p  -o $json_path
+    sudo -Hu "$pleroma_username" jj -i $json_path -v "$emoji_count" "files_count" -p -o $json_path
 }
 
 function run
@@ -152,6 +152,7 @@ function run
 
         sudo -Hu "$pleroma_username" jj -i $json_path -D "files.$emoji_name" -p -o $json_path
         update_count
+
         echo "Emoji removed!"
         echo "Emoji name: $emoji_name"
         echo "Emoji path: $json_dir/$removed_emoji_file"
