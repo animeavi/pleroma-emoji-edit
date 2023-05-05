@@ -4,6 +4,10 @@ set -e
 
 url_regex='^(https?|ftp|file)://'
 
+# Set this if you want to refresh the emoji automatically
+instance_url="https://example.com"
+bearer_token=""
+
 function parse_args
 {
     while [[ $# -gt 0 ]]; do
@@ -109,7 +113,6 @@ function update_count
     jj -i $json_path -v "$emoji_count" "files_count" -p  -o $json_path
 }
 
-
 function run
 {
     parse_args "$@"
@@ -139,7 +142,6 @@ function run
         echo "Emoji name: $emoji_name"
         echo "Emoji source: $emoji_path"
         echo "Emoji path: $json_dir/$emoji_filename"
-        exit 0
     else
         removed_emoji_file=$(jj -i "$json_path" -O "files.$emoji_name")
 
@@ -158,7 +160,11 @@ function run
             rm -rf "$json_dir/$removed_emoji_file"
             echo "Emoji file deleted from file system!"
         fi
+    fi
 
+    if [[ ! -z "${bearer_token}" ]]; then
+        echo "Attempting to refresh emoji..."
+        curl -X POST "$instance_url/api/v1/pleroma/admin/reload_emoji" -H "authorization: Bearer $bearer_token"
         exit 0
     fi
 }

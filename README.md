@@ -4,6 +4,7 @@ Add or remove emojis from Pleroma emoji packs (maybe more in the future!)
 ## Requirements
 - awk
 - basename (GNU Coreutils)
+- curl (only if you set the bearer token)
 - jj (https://github.com/tidwall/jj)
 - wget
 
